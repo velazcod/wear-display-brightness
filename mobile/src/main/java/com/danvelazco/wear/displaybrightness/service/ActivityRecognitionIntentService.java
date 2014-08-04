@@ -205,13 +205,17 @@ public class ActivityRecognitionIntentService extends IntentService implements G
         Log.d(LOG_TAG, "isDaytime()");
 
         if (mCurrentLocation != null) {
-            com.luckycatlabs.sunrisesunset.dto.Location ssLocation = new com.luckycatlabs.sunrisesunset.dto.Location(mCurrentLocation.getLatitude(),
-                    mCurrentLocation.getLongitude());
-            SunriseSunsetCalculator calculator = new SunriseSunsetCalculator(ssLocation, TimeZone.getDefault());
+
+            // TODO: make this configurable by user!
+            // Sun degrees
+            double sunriseSunDegrees = 15;
+            double sunsetSunDegrees = 5;
 
             Calendar calendarNow = Calendar.getInstance();
-            Calendar calendarSunrise = calculator.getOfficialSunriseCalendarForDate(Calendar.getInstance());
-            Calendar calendarSunset = calculator.getOfficialSunsetCalendarForDate(Calendar.getInstance());
+            Calendar calendarSunrise = SunriseSunsetCalculator.getSunrise(mCurrentLocation.getLatitude(),
+                    mCurrentLocation.getLongitude(), TimeZone.getDefault(), Calendar.getInstance(), sunriseSunDegrees);
+            Calendar calendarSunset = SunriseSunsetCalculator.getSunset(mCurrentLocation.getLatitude(),
+                    mCurrentLocation.getLongitude(), TimeZone.getDefault(), Calendar.getInstance(), sunsetSunDegrees);
 
             // It's day time if the current time is after sunrise and before sunset
             return calendarNow.after(calendarSunrise) && calendarNow.before(calendarSunset);
