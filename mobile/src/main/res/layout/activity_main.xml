@@ -18,6 +18,7 @@
         android:contentDescription="@string/txt_app_icon" />
 
     <TextView
+        android:id="@+id/tv_app_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -27,6 +28,16 @@
         android:paddingRight="40dp"
         android:gravity="center"
         android:text="@string/txt_useless_activity_notice" />
+
+    <TextView
+        android:id="@+id/tv_debug_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tv_app_info"
+        android:layout_marginTop="40dp"
+        android:text="Debug information"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/btn_hide_activity"

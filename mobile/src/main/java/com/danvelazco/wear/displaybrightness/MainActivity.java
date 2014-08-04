@@ -2,12 +2,15 @@ package com.danvelazco.wear.displaybrightness;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import com.danvelazco.wear.displaybrightness.shared.BrightnessLevel;
 import com.danvelazco.wear.displaybrightness.util.ActivityRecognitionHelper;
 import com.google.android.gms.common.ConnectionResult;
@@ -23,6 +26,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Goog
 
     // Members
     private GoogleApiClient mGoogleApiClient;
+    private TextView mTvDebugInfo = null;
 
     /**
      * {@inheritDoc}
@@ -51,6 +55,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Goog
         if (BuildConfig.DEBUG) {
             ViewGroup buttonsViewGroup = (ViewGroup) findViewById(R.id.layout_buttons);
             buttonsViewGroup.setVisibility(View.VISIBLE);
+
+            mTvDebugInfo = (TextView) findViewById(R.id.tv_debug_info);
+            mTvDebugInfo.setVisibility(View.VISIBLE);
+
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String sunrise = sharedPreferences.getString("sunrise_time", null);
+            String sunset = sharedPreferences.getString("sunset_time", null);
+            mTvDebugInfo.setText("Sunrise: " + sunrise + " - Sunset: " + sunset);
 
             Button btnBrightnessLow = (Button) findViewById(R.id.btn_brightness_low);
             btnBrightnessLow.setOnClickListener(this);

@@ -2,8 +2,10 @@ package com.danvelazco.wear.displaybrightness.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import com.danvelazco.wear.displaybrightness.shared.BrightnessLevel;
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +40,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
 
     // Members
     private GoogleApiClient mGoogleApiClient;
+    private SharedPreferences mSharedPreferences;
     private LocationClient mLocationClient;
 
     // Pending data
@@ -56,6 +59,8 @@ public class ActivityRecognitionIntentService extends IntentService implements G
     public void onCreate() {
         super.onCreate();
         Log.d("ActivityRecognitionIntentService", "onCreate()");
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -216,6 +221,16 @@ public class ActivityRecognitionIntentService extends IntentService implements G
                     mCurrentLocation.getLongitude(), TimeZone.getDefault(), Calendar.getInstance(), sunriseSunDegrees);
             Calendar calendarSunset = SunriseSunsetCalculator.getSunset(mCurrentLocation.getLatitude(),
                     mCurrentLocation.getLongitude(), TimeZone.getDefault(), Calendar.getInstance(), sunsetSunDegrees);
+
+            String sunrise = calendarSunrise.get(Calendar.HOUR_OF_DAY) + ":" + calendarSunrise.get(Calendar.MINUTE);
+            String sunset = calendarSunset.get(Calendar.HOUR_OF_DAY) + ":" + calendarSunset.get(Calendar.MINUTE);
+            Log.d(LOG_TAG, "Sunrise: " + sunrise);
+            Log.d(LOG_TAG, "Sunset: " + sunset);
+
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
+            editor.putString("sunrise_time", sunrise);
+            editor.putString("sunset_time", sunset);
+            editor.apply();
 
             // It's day time if the current time is after sunrise and before sunset
             return calendarNow.after(calendarSunrise) && calendarNow.before(calendarSunset);
