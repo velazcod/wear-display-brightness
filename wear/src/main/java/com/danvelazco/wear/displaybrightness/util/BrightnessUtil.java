@@ -18,9 +18,14 @@ public class BrightnessUtil {
      * @param brightnessLevel {@link int} brightness level from 10 to 255
      */
     public static void setSystemBrightnessLevel(Context context, int brightnessLevel) {
-        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
+        int currentMode = Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
                 Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightnessLevel);
+        if (currentMode != Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC) {
+            // Only change system brightness levels if the current mode is not in auto
+            Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightnessLevel);
+        }
     }
 
 }
