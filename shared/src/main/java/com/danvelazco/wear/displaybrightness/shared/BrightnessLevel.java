@@ -19,14 +19,18 @@ public class BrightnessLevel {
      * the watch app can determine the value on its own, in case newer watches have non-standard brightness levels
      */
     public static final int LOWEST = 0;
-    public static final int MEDIUM = 1;
-    public static final int HIGHEST = 2;
+    public static final int MEDIUM_LOW = 1;
+    public static final int MEDIUM = 2;
+    public static final int MEDIUM_HIGH = 3;
+    public static final int HIGHEST = 4;
 
     /**
      * Default brightness levels
      */
     private static final int LOW_LEVEL = 10;
-    private static final int MEDIUM_LEVEL = 140;
+    private static final int MEDIUM_LOW_LEVEL = 65;
+    private static final int MEDIUM_LEVEL = 130;
+    private static final int MEDIUM_HIGH_LEVEL = 190;
     private static final int HIGHEST_LEVEL = 255;
 
     /**
@@ -45,8 +49,12 @@ public class BrightnessLevel {
         switch (value) {
             case LOWEST:
                 return LOW_LEVEL;
+            case MEDIUM_LOW:
+                return MEDIUM_LOW_LEVEL;
             case MEDIUM:
                 return MEDIUM_LEVEL;
+            case MEDIUM_HIGH:
+                return MEDIUM_HIGH_LEVEL;
             case HIGHEST:
                 return HIGHEST_LEVEL;
             default:
