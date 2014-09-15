@@ -2,9 +2,25 @@
 <resources>
 
     <string name="app_name">Watch Display Brightness</string>
-    <string name="txt_hide_icon">Hide launcher icon</string>
-    <string name="txt_app_icon">Application icon</string>
-    <string name="txt_useless_activity_notice">This activity only needs to be launched once, after that, it becomes useless and it does not need to be opened again.
-    \n\nFeel free to hide it from your launcher by clicking on the button below</string>
+
+    <string name="lbl_brightness_levels">Brightness levels (Daytime only)</string>
+    <string name="lbl_activity_preference_summary">Brightness level: %s</string>
+
+    <!-- Activities -->
+    <string name="lbl_activity_driving">Driving</string>
+    <string name="lbl_activity_on_bicycle">On bicycle</string>
+    <string name="lbl_activity_walking">Walking</string>
+    <string name="lbl_activity_running">Running</string>
+    <string name="lbl_activity_still">Not moving</string>
+    <string name="lbl_activity_on_foot">On foot</string>
+    <string name="lbl_activity_unknown">Undetected</string>
+
+    <string-array name="brightness_levels_array">
+        <item>Lowest</item>
+        <item>Medium low</item>
+        <item>Medium</item>
+        <item>Medium high</item>
+        <item>Highest</item>
+    </string-array>
 
 </resources>

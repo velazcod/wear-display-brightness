@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import com.danvelazco.wear.displaybrightness.BrightnessLevelsPreferenceActivity;
 import com.danvelazco.wear.displaybrightness.shared.BrightnessLevel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -40,7 +40,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
 
     // Members
     private GoogleApiClient mGoogleApiClient;
-    private SharedPreferences mSharedPreferences;
+    private SharedPreferences mSharedPreferencesBrightnessLevels;
     private LocationClient mLocationClient;
 
     // Pending data
@@ -60,7 +60,8 @@ public class ActivityRecognitionIntentService extends IntentService implements G
         super.onCreate();
         Log.d("ActivityRecognitionIntentService", "onCreate()");
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mSharedPreferencesBrightnessLevels = getSharedPreferences(BrightnessLevelsPreferenceActivity.KEY_PREF_FILENAME,
+                MODE_MULTI_PROCESS);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -85,8 +86,6 @@ public class ActivityRecognitionIntentService extends IntentService implements G
                 // Synchronize the activity detection and the user's location before sending data to wearable
                 if (mDetectedActivity != null) {
                     determineBrightnessLevelBasedOnData();
-                } else {
-                    Log.d(LOG_TAG, "Location data is available but we haven't detected activity yet, waiting...");
                 }
             }
         }
@@ -137,8 +136,6 @@ public class ActivityRecognitionIntentService extends IntentService implements G
                 // Synchronize the activity detection and the user's location before sending data to wearable
                 if (mCurrentLocation != null) {
                     determineBrightnessLevelBasedOnData();
-                } else {
-                    Log.d(LOG_TAG, "Detected activity but We don't have location data yet, waiting...");
                 }
             }
         }
@@ -166,38 +163,67 @@ public class ActivityRecognitionIntentService extends IntentService implements G
         Log.d(LOG_TAG, "determineBrightnessLevelBasedOnData()");
 
         if (!isDaytime()) {
-            Log.d(LOG_TAG, "It's night time");
+            Log.d(LOG_TAG, "It's night time, set to lowest level");
 
             // It's nighttime, nothing to see here, set it to lowest and forget it!
             setBrightnessLevel(BrightnessLevel.LOWEST);
             return;
         } else {
-            Log.d(LOG_TAG, "It's day time");
+            Log.d(LOG_TAG, "It's day time, get current activity");
         }
 
-        int brightnessLevel;
+        String brightnessLevelPrefKey;
+        String defaultValue;
         switch (mDetectedActivity.getType()) {
-            case DetectedActivity.STILL:
-            case DetectedActivity.TILTING:
-            case DetectedActivity.UNKNOWN:
-                Log.d(LOG_TAG, "Mild activity, we may be indoors, setting to medium");
-                brightnessLevel = BrightnessLevel.MEDIUM;
-                break;
             case DetectedActivity.IN_VEHICLE:
+                Log.d(LOG_TAG, "Vehicle");
+                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_DRIVING;
+                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_DRIVING);
+                break;
             case DetectedActivity.ON_BICYCLE:
-            case DetectedActivity.ON_FOOT:
+                Log.d(LOG_TAG, "On bicycle");
+                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_ON_BICYCLE;
+                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_BICYCLE);
+                break;
             case DetectedActivity.WALKING:
+                Log.d(LOG_TAG, "Walking");
+                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_WALKING;
+                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_WALKING);
+                break;
             case DetectedActivity.RUNNING:
-                Log.d(LOG_TAG, "Outdoors activity, setting to high");
-                brightnessLevel = BrightnessLevel.HIGHEST;
+                Log.d(LOG_TAG, "Running");
+                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_RUNNING;
+                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_RUNNING);
+                break;
+            case DetectedActivity.STILL:
+                Log.d(LOG_TAG, "Still");
+                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_STILL;
+                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_STILL);
+                break;
+            case DetectedActivity.ON_FOOT:
+                Log.d(LOG_TAG, "On foot");
+                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_ON_FOOT;
+                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_ON_FOOT);
+                break;
+            case DetectedActivity.TILTING:
+                Log.d(LOG_TAG, "Tilting");
+                // Nope... Ignored tilting!
+                return;
+            case DetectedActivity.UNKNOWN:
+                Log.d(LOG_TAG, "Unknown");
+                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_UNKNOWN;
+                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_UNKNOWN);
                 break;
             default:
                 Log.d(LOG_TAG, "I have no idea what I'm doing");
-                brightnessLevel = BrightnessLevel.MEDIUM;
+                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_UNKNOWN;
+                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_UNKNOWN);
                 break;
         }
 
-        setBrightnessLevel(brightnessLevel);
+        String brightnessLevelValueString = mSharedPreferencesBrightnessLevels. getString(brightnessLevelPrefKey,
+                defaultValue);
+        setBrightnessLevel(Integer.parseInt(brightnessLevelValueString));
     }
 
     /**
@@ -226,11 +252,6 @@ public class ActivityRecognitionIntentService extends IntentService implements G
             String sunset = calendarSunset.get(Calendar.HOUR_OF_DAY) + ":" + calendarSunset.get(Calendar.MINUTE);
             Log.d(LOG_TAG, "Sunrise: " + sunrise);
             Log.d(LOG_TAG, "Sunset: " + sunset);
-
-            SharedPreferences.Editor editor = mSharedPreferences.edit();
-            editor.putString("sunrise_time", sunrise);
-            editor.putString("sunset_time", sunset);
-            editor.apply();
 
             // It's day time if the current time is after sunrise and before sunset
             return calendarNow.after(calendarSunrise) && calendarNow.before(calendarSunset);

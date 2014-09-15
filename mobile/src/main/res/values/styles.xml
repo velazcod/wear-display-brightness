@@ -1,8 +1,14 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar">
+    <style name="BaseTheme" parent="android:Theme.Holo.Light" />
+
+    <style name="AppTheme" parent="@style/BaseTheme">
         <!-- Customize your theme here. -->
+
+        <!-- Hide action bar and set title size to 0 temporarily while we load -->
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowTitleSize">0dp</item>
     </style>
 
 </resources>
