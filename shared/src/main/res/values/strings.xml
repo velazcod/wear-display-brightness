@@ -1,3 +1,19 @@
 <resources>
 
+    <!-- MAINTAIN VALUES UPDATED WITH BrightnessLevel.java -->
+    <string name="brightness_level_lowest_value">0</string>
+    <string name="brightness_level_medium_low_value">1</string>
+    <string name="brightness_level_medium_value">2</string>
+    <string name="brightness_level_medium_high_value">3</string>
+    <string name="brightness_level_highest_value">4</string>
+
+    <!-- DO NOT TRANSLATE -->
+    <string-array name="brightness_levels_values">
+        <item>@string/brightness_level_lowest_value</item>
+        <item>@string/brightness_level_medium_low_value</item>
+        <item>@string/brightness_level_medium_value</item>
+        <item>@string/brightness_level_medium_high_value</item>
+        <item>@string/brightness_level_highest_value</item>
+    </string-array>
+
 </resources>
