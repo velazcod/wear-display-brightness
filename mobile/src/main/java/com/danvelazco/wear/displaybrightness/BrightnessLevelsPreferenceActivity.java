@@ -3,10 +3,14 @@ package com.danvelazco.wear.displaybrightness;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.Window;
 import com.danvelazco.wear.displaybrightness.shared.BrightnessLevel;
 import com.danvelazco.wear.displaybrightness.util.ActivityRecognitionHelper;
@@ -64,6 +68,31 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
         // Schedule the activity detection updates
         ActivityRecognitionHelper activityRecognitionHelper = new ActivityRecognitionHelper(this);
         activityRecognitionHelper.scheduleActivityUpdates();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (BuildConfig.DEBUG) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.menu_preference_activity, menu);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_debug:
+                startActivity(new Intent(BrightnessLevelsPreferenceActivity.this, DebugActivity.class));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

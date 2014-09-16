@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Watch Display Brightness</string>
+    <string name="lbl_debug">Debug</string>
 
     <string name="lbl_brightness_levels">Brightness levels (Daytime only)</string>
     <string name="lbl_activity_preference_summary">Brightness level: %s</string>
