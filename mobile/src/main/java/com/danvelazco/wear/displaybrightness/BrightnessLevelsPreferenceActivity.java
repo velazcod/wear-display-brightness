@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -55,7 +56,15 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
         setContentView(R.layout.activity_fragment_container);
 
         if (actionBar != null) {
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE | ActionBar.DISPLAY_SHOW_HOME);
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+                // Based on the design guidelines, app icon should be shown on ActionBar
+                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE
+                        | ActionBar.DISPLAY_SHOW_HOME);
+            } else {
+                // Except for Android L, where icon shouldn't be shown
+                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE);
+            }
+
             actionBar.show();
         }
 
