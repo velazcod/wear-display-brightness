@@ -32,8 +32,8 @@ dependencies {
     compile project(':shared')
 
     // Google utility libraries
-    compile 'com.google.android.support:wearable:+'
-    compile 'com.google.android.gms:play-services-wearable:+'
+    compile 'com.google.android.support:wearable:1.+'
+    compile 'com.google.android.gms:play-services-wearable:5.+'
 
     // Compile all jars under the lib folder
     compile fileTree(dir: 'libs', include: ['*.jar'])

@@ -28,14 +28,14 @@ android {
 }
 
 dependencies {
-    // Include the watch face
+    // Include the watch app
     wearApp project(':wear')
 
     // Compile the shared module
     compile project(':shared')
 
     // Google utility libraries
-    compile 'com.google.android.gms:play-services-wearable:+'
+    compile 'com.google.android.gms:play-services-wearable:5.+'
 
     //Sunrise/Sunset calculator library
     compile 'com.luckycatlabs:SunriseSunsetCalculator:1.1'
