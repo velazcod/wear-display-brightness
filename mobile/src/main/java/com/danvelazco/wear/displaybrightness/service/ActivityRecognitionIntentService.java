@@ -47,6 +47,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
     private DetectedActivity mDetectedActivity = null;
     private Location mCurrentLocation = null;
     private int mPendingLevelToSend = -1;
+    private float mLumVal;
 
     /**
      * Constructor
@@ -126,19 +127,49 @@ public class ActivityRecognitionIntentService extends IntentService implements G
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d("ActivityRecognitionIntentService", "onHandleIntent()");
-        ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-        if (result != null) {
-            DetectedActivity detectedActivity = result.getMostProbableActivity();
-            if (detectedActivity != null) {
-                Log.d(LOG_TAG, "Detected activity: " + detectedActivity.toString());
-                mDetectedActivity = detectedActivity;
 
-                // Synchronize the activity detection and the user's location before sending data to wearable
-                if (mCurrentLocation != null) {
-                    determineBrightnessLevelBasedOnData();
+        if (intent.getBooleanExtra(ScreenMonitorService.SOURCE_IS_SCREEN, false)){
+            float lumVal = intent.getFloatExtra(ScreenMonitorService.AMBIENT_LIGHT_VAL, -1);
+            if (lumVal!=-1){
+                mLumVal = lumVal;
+                determineBrightnessLevelBasedOnLinkedScreen();
+            }
+        }else{
+            ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
+            if (result != null) {
+                DetectedActivity detectedActivity = result.getMostProbableActivity();
+                if (detectedActivity != null) {
+                    Log.d(LOG_TAG, "Detected activity: " + detectedActivity.toString());
+                    mDetectedActivity = detectedActivity;
+
+                    // Synchronize the activity detection and the user's location before sending data to wearable
+                    if (mCurrentLocation != null) {
+                        determineBrightnessLevelBasedOnData();
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Determine the brightness level that will be set on the watch based on luminance values from phone.
+     * This should supersede that from activity and last known location
+     */
+    private void determineBrightnessLevelBasedOnLinkedScreen() {
+        Log.d(LOG_TAG, "determineBrightnessLevelBasedOnData "+ mLumVal);
+        int targetBrightnessLevel = BrightnessLevel.MEDIUM;
+        if (mLumVal < 165){
+            targetBrightnessLevel = BrightnessLevel.LOWEST;
+        }else if (mLumVal < 640){
+            targetBrightnessLevel = BrightnessLevel.MEDIUM_LOW;
+        }else if (mLumVal < 1945){
+            targetBrightnessLevel = BrightnessLevel.MEDIUM;
+        }else if (mLumVal < 5800){
+            targetBrightnessLevel = BrightnessLevel.MEDIUM_HIGH;
+        }else if (mLumVal >=5800){
+            targetBrightnessLevel = BrightnessLevel.HIGHEST;
+        }
+        setBrightnessLevel(targetBrightnessLevel);
     }
 
     /**
