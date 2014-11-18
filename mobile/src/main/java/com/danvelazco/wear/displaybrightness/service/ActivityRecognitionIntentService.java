@@ -130,6 +130,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
 
         if (intent.getBooleanExtra(ScreenMonitorService.SOURCE_IS_SCREEN, false)){
             float lumVal = intent.getFloatExtra(ScreenMonitorService.AMBIENT_LIGHT_VAL, -1);
+            Log.d("ActivityRecognitionIntentService", "Got "+lumVal);
             if (lumVal!=-1){
                 mLumVal = lumVal;
                 determineBrightnessLevelBasedOnLinkedScreen();
@@ -158,11 +159,11 @@ public class ActivityRecognitionIntentService extends IntentService implements G
     private void determineBrightnessLevelBasedOnLinkedScreen() {
         Log.d(LOG_TAG, "determineBrightnessLevelBasedOnData "+ mLumVal);
         int targetBrightnessLevel = BrightnessLevel.MEDIUM;
-        if (mLumVal < 165){
+        if (mLumVal < 55){
             targetBrightnessLevel = BrightnessLevel.LOWEST;
-        }else if (mLumVal < 640){
+        }else if (mLumVal < 100){
             targetBrightnessLevel = BrightnessLevel.MEDIUM_LOW;
-        }else if (mLumVal < 1945){
+        }else if (mLumVal < 300){
             targetBrightnessLevel = BrightnessLevel.MEDIUM;
         }else if (mLumVal < 5800){
             targetBrightnessLevel = BrightnessLevel.MEDIUM_HIGH;

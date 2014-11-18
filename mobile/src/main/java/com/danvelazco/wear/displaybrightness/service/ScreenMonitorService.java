@@ -11,6 +11,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -41,6 +42,8 @@ public class ScreenMonitorService extends Service implements SensorEventListener
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
+        Log.d("ScreenMonitorService", "Sensor's maximum range is: " + mLight.getMaximumRange());
+
         if (mLight==null){
             //TODO disable this function
         }
@@ -66,8 +69,8 @@ public class ScreenMonitorService extends Service implements SensorEventListener
                     //Only push the data on screen off and only if we have sensor data
                     if (lastVal!=-1){
                         Intent activityRecognitionIntent = new Intent(context, ActivityRecognitionIntentService.class);
-                        intent.putExtra(SOURCE_IS_SCREEN, true);
-                        intent.putExtra(AMBIENT_LIGHT_VAL, lastVal);
+                        activityRecognitionIntent.putExtra(SOURCE_IS_SCREEN, true);
+                        activityRecognitionIntent.putExtra(AMBIENT_LIGHT_VAL, lastVal);
                         context.startService(activityRecognitionIntent);
                     }
                 }
@@ -96,6 +99,7 @@ public class ScreenMonitorService extends Service implements SensorEventListener
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_LIGHT){
             lastVal = event.values[0];
+            //Log.d("ScreenMonitorService", "Changed "+lastVal);
         }
     }
 
