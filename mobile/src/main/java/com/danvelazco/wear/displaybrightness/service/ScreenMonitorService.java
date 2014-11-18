@@ -22,6 +22,7 @@ public class ScreenMonitorService extends Service implements SensorEventListener
     private SensorManager mSensorManager;
     private Sensor mLight;
     private float lastVal;
+    private BroadcastReceiver screenReceiver;
 
 
     public ScreenMonitorService() {
@@ -44,7 +45,7 @@ public class ScreenMonitorService extends Service implements SensorEventListener
             //TODO disable this function
         }
 
-        BroadcastReceiver screenReceiver = new BroadcastReceiver() {
+        screenReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("ScreenReceiver", "Received screen event " + intent.getAction());
@@ -82,7 +83,11 @@ public class ScreenMonitorService extends Service implements SensorEventListener
 
     @Override
     public void onDestroy() {
-        mSensorManager.unregisterListener(this);
+        Log.d("ScreenMonitorService", "Stopped");
+        if (mSensorManager!=null)
+            mSensorManager.unregisterListener(this);
+        if (screenReceiver!=null)
+            unregisterReceiver(screenReceiver);
         super.onDestroy();
     }
 

@@ -3,8 +3,11 @@ package com.danvelazco.wear.displaybrightness.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.Preference;
 import android.util.Log;
 
+import com.danvelazco.wear.displaybrightness.BrightnessLevelsPreferenceActivity;
 import com.danvelazco.wear.displaybrightness.service.ScreenMonitorService;
 import com.danvelazco.wear.displaybrightness.util.ActivityRecognitionHelper;
 
@@ -22,8 +25,11 @@ public class BootReceiver extends BroadcastReceiver {
             ActivityRecognitionHelper activityRecognitionHelper = new ActivityRecognitionHelper(context);
             activityRecognitionHelper.scheduleActivityUpdates();
 
-            Intent screenMonitorService = new Intent(context, ScreenMonitorService.class);
-            context.startService(screenMonitorService);
+            SharedPreferences sharedPreferences = context.getSharedPreferences(BrightnessLevelsPreferenceActivity.KEY_PREF_FILENAME, Context.MODE_MULTI_PROCESS);
+            if (sharedPreferences.getBoolean(BrightnessLevelsPreferenceActivity.KEY_LINK_BRIGHTNESS, false)){
+                Intent screenMonitorService = new Intent(context, ScreenMonitorService.class);
+                context.startService(screenMonitorService);
+            }
         }
     }
 }

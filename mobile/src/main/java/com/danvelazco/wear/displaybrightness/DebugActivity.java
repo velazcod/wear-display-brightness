@@ -2,9 +2,6 @@ package com.danvelazco.wear.displaybrightness;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -12,7 +9,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 
-import com.danvelazco.wear.displaybrightness.receiver.ScreenReceiver;
 import com.danvelazco.wear.displaybrightness.shared.BrightnessLevel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -83,11 +79,6 @@ public class DebugActivity extends Activity implements View.OnClickListener, Goo
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-
-        BroadcastReceiver screenReceiver = new ScreenReceiver();
-        IntentFilter screenStateFilter = new IntentFilter();
-        screenStateFilter.addAction(Intent.ACTION_SCREEN_ON);
-        registerReceiver(screenReceiver, screenStateFilter);
     }
 
     @Override
