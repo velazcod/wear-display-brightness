@@ -5,20 +5,22 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.danvelazco.wear.displaybrightness.BrightnessLevelsPreferenceActivity;
+
 public class ScreenMonitorService extends Service implements SensorEventListener {
     public static final String SOURCE_IS_SCREEN = "SOURCE_IS_SCREEN";
-    protected static final String AMBIENT_LIGHT_VAL = "AMBIENT_LIGHT_VAL";
+    public static final String AMBIENT_LIGHT_VAL = "AMBIENT_LIGHT_VAL";
     public static final long VALUE_DELAY = 5000; //in millis
     public static final long MIN_SCREEN_TIME = 10000;
 
@@ -57,11 +59,15 @@ public class ScreenMonitorService extends Service implements SensorEventListener
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mLight = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
-        Log.d("ScreenMonitorService", "Sensor's maximum range is: " + mLight.getMaximumRange());
-
+        //We seem to have no light sensor; turn off preference, stop service
         if (mLight==null){
-            //TODO disable this function
+            SharedPreferences sharedPreferences = this.getSharedPreferences(BrightnessLevelsPreferenceActivity.KEY_PREF_FILENAME, Context.MODE_MULTI_PROCESS);
+            sharedPreferences.edit().putBoolean(BrightnessLevelsPreferenceActivity.KEY_LINK_BRIGHTNESS, false).apply();
+            stopSelf();
+            return onStartCommand(intent, flags, startID);
         }
+
+        Log.d("ScreenMonitorService", "Sensor's maximum range is: " + mLight.getMaximumRange());
 
         screenReceiver = new BroadcastReceiver() {
             @Override
