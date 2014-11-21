@@ -37,6 +37,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
 
     // Constants
     private static final String LOG_TAG = "ActivityRecognitionIntentService";
+    public static final long VALUE_TIMEOUT = 1000 * 60 * 60; //1 hour in millis
 
     // Members
     private GoogleApiClient mGoogleApiClient;
@@ -45,9 +46,11 @@ public class ActivityRecognitionIntentService extends IntentService implements G
 
     // Pending data
     private DetectedActivity mDetectedActivity = null;
+    private DetectedActivity mLastActivity;
     private Location mCurrentLocation = null;
     private int mPendingLevelToSend = -1;
     private float mLumVal;
+    private long mLastSetTime = -1;
 
     /**
      * Constructor
@@ -141,6 +144,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
                 DetectedActivity detectedActivity = result.getMostProbableActivity();
                 if (detectedActivity != null) {
                     Log.d(LOG_TAG, "Detected activity: " + detectedActivity.toString());
+                    mLastActivity = detectedActivity;
                     mDetectedActivity = detectedActivity;
 
                     // Synchronize the activity detection and the user's location before sending data to wearable
@@ -193,6 +197,12 @@ public class ActivityRecognitionIntentService extends IntentService implements G
      */
     private void determineBrightnessLevelBasedOnData() {
         Log.d(LOG_TAG, "determineBrightnessLevelBasedOnData()");
+
+        //No point in setting brightness values if the activity has not changed unless timeout has passed
+        //Also has the bonus effect of not wiping out linked brightness settings
+        if (((System.currentTimeMillis() - mLastSetTime) < VALUE_TIMEOUT) && (mLastActivity != null && mDetectedActivity.getType() == mLastActivity.getType())){
+            return;
+        }
 
         if (!isDaytime()) {
             Log.d(LOG_TAG, "It's night time, set to lowest level");
@@ -302,6 +312,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
      *         {@link BrightnessLevel} to be sent to the watch
      */
     private void setBrightnessLevel(int brightnessLevel) {
+        mLastSetTime = System.currentTimeMillis();
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             sendBrightnessLevelToWatch(brightnessLevel);
         } else {
