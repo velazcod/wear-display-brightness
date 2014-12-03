@@ -248,13 +248,15 @@ public class ActivityRecognitionIntentService extends IntentService implements G
             Calendar calendarSunset = SunriseSunsetCalculator.getSunset(mCurrentLocation.getLatitude(),
                     mCurrentLocation.getLongitude(), TimeZone.getDefault(), Calendar.getInstance(), sunsetSunDegrees);
 
-            String sunrise = calendarSunrise.get(Calendar.HOUR_OF_DAY) + ":" + calendarSunrise.get(Calendar.MINUTE);
-            String sunset = calendarSunset.get(Calendar.HOUR_OF_DAY) + ":" + calendarSunset.get(Calendar.MINUTE);
-            Log.d(LOG_TAG, "Sunrise: " + sunrise);
-            Log.d(LOG_TAG, "Sunset: " + sunset);
+            if ((calendarSunrise != null) && (calendarSunset != null)) {
+                String sunrise = calendarSunrise.get(Calendar.HOUR_OF_DAY) + ":" + calendarSunrise.get(Calendar.MINUTE);
+                String sunset = calendarSunset.get(Calendar.HOUR_OF_DAY) + ":" + calendarSunset.get(Calendar.MINUTE);
+                Log.d(LOG_TAG, "Sunrise: " + sunrise);
+                Log.d(LOG_TAG, "Sunset: " + sunset);
 
-            // It's day time if the current time is after sunrise and before sunset
-            return calendarNow.after(calendarSunrise) && calendarNow.before(calendarSunset);
+                // It's day time if the current time is after sunrise and before sunset
+                return calendarNow.after(calendarSunrise) && calendarNow.before(calendarSunset);
+            }
         }
 
         // If we couldn't calculate the sunrise/sunset, default to day time
