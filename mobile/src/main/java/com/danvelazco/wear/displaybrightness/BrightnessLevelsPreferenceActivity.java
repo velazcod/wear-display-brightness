@@ -6,6 +6,7 @@ import android.app.ListFragment;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -13,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
+
+import com.danvelazco.wear.displaybrightness.service.ScreenMonitorService;
 import com.danvelazco.wear.displaybrightness.shared.BrightnessLevel;
 import com.danvelazco.wear.displaybrightness.util.ActivityRecognitionHelper;
 
@@ -31,6 +34,7 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
     public final static String KEY_LEVEL_STILL = "level_still";
     public final static String KEY_LEVEL_ON_FOOT = "level_on_foot";
     public final static String KEY_LEVEL_UNKNOWN = "level_unknown";
+    public final static String KEY_LINK_BRIGHTNESS = "link_brightness";
 
     // Default values
     public final static int DEFAULT_LEVEL_DRIVING = BrightnessLevel.HIGHEST;
@@ -112,6 +116,7 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
             Preference.OnPreferenceChangeListener {
 
         // Preference items
+        private CheckBoxPreference mPreferenceLink;
         private ListPreference mPreferenceDriving;
         private ListPreference mPreferenceBicyle;
         private ListPreference mPreferenceWalking;
@@ -160,6 +165,9 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
 
             mPreferenceUnknown = (ListPreference) findPreference(KEY_LEVEL_UNKNOWN);
             mPreferenceUnknown.setOnPreferenceChangeListener(this);
+
+            mPreferenceLink = (CheckBoxPreference) findPreference(KEY_LINK_BRIGHTNESS);
+            mPreferenceLink.setOnPreferenceChangeListener(this);
         }
 
         /**
@@ -177,6 +185,14 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             switch (preference.getKey()) {
+                case KEY_LINK_BRIGHTNESS:
+                    Intent screenMonitorService = new Intent(getActivity(), ScreenMonitorService.class);
+                    if ((boolean)newValue){
+                        getActivity().startService(screenMonitorService);
+                    }else{
+                        getActivity().stopService(screenMonitorService);
+                    }
+                    return true;
                 case KEY_LEVEL_DRIVING:
                     setBrightnessLevelPreferenceSummary(mPreferenceDriving, getPreferenceEntryLabel(mPreferenceDriving,
                             (CharSequence) newValue));

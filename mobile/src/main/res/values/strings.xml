@@ -15,6 +15,8 @@
     <string name="lbl_activity_still">Not moving</string>
     <string name="lbl_activity_on_foot">On foot</string>
     <string name="lbl_activity_unknown">Undetected</string>
+    <string name="lbl_link_brightness">Link Brightness</string>
+    <string name="dsc_link_brightness">Use phone\'s light sensor to set watch brightness when available.</string>
 
     <string-array name="brightness_levels_array">
         <item>Lowest</item>

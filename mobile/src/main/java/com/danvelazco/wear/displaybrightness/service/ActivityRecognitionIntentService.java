@@ -37,6 +37,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
 
     // Constants
     private static final String LOG_TAG = "ActivityRecognitionIntentService";
+    public static final long VALUE_TIMEOUT = 1000 * 60 * 60; //1 hour in millis
 
     // Members
     private GoogleApiClient mGoogleApiClient;
@@ -45,8 +46,11 @@ public class ActivityRecognitionIntentService extends IntentService implements G
 
     // Pending data
     private DetectedActivity mDetectedActivity = null;
+    private DetectedActivity mLastActivity;
     private Location mCurrentLocation = null;
     private int mPendingLevelToSend = -1;
+    private float mLumVal;
+    private long mLastSetTime = -1;
 
     /**
      * Constructor
@@ -126,19 +130,51 @@ public class ActivityRecognitionIntentService extends IntentService implements G
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d("ActivityRecognitionIntentService", "onHandleIntent()");
-        ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-        if (result != null) {
-            DetectedActivity detectedActivity = result.getMostProbableActivity();
-            if (detectedActivity != null) {
-                Log.d(LOG_TAG, "Detected activity: " + detectedActivity.toString());
-                mDetectedActivity = detectedActivity;
 
-                // Synchronize the activity detection and the user's location before sending data to wearable
-                if (mCurrentLocation != null) {
-                    determineBrightnessLevelBasedOnData();
+        if (intent.getBooleanExtra(ScreenMonitorService.SOURCE_IS_SCREEN, false)){
+            float lumVal = intent.getFloatExtra(ScreenMonitorService.AMBIENT_LIGHT_VAL, -1);
+            Log.d("ActivityRecognitionIntentService", "Got "+lumVal);
+            if (lumVal!=-1){
+                mLumVal = lumVal;
+                determineBrightnessLevelBasedOnLinkedScreen();
+            }
+        }else{
+            ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
+            if (result != null) {
+                DetectedActivity detectedActivity = result.getMostProbableActivity();
+                if (detectedActivity != null) {
+                    Log.d(LOG_TAG, "Detected activity: " + detectedActivity.toString());
+                    mLastActivity = detectedActivity;
+                    mDetectedActivity = detectedActivity;
+
+                    // Synchronize the activity detection and the user's location before sending data to wearable
+                    if (mCurrentLocation != null) {
+                        determineBrightnessLevelBasedOnData();
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * Determine the brightness level that will be set on the watch based on luminance values from phone.
+     * This should supersede that from activity and last known location
+     */
+    private void determineBrightnessLevelBasedOnLinkedScreen() {
+        Log.d(LOG_TAG, "determineBrightnessLevelBasedOnData "+ mLumVal);
+        int targetBrightnessLevel = BrightnessLevel.MEDIUM;
+        if (mLumVal < 55){
+            targetBrightnessLevel = BrightnessLevel.LOWEST;
+        }else if (mLumVal < 100){
+            targetBrightnessLevel = BrightnessLevel.MEDIUM_LOW;
+        }else if (mLumVal < 300){
+            targetBrightnessLevel = BrightnessLevel.MEDIUM;
+        }else if (mLumVal < 5800){
+            targetBrightnessLevel = BrightnessLevel.MEDIUM_HIGH;
+        }else if (mLumVal >=5800){
+            targetBrightnessLevel = BrightnessLevel.HIGHEST;
+        }
+        setBrightnessLevel(targetBrightnessLevel);
     }
 
     /**
@@ -161,6 +197,12 @@ public class ActivityRecognitionIntentService extends IntentService implements G
      */
     private void determineBrightnessLevelBasedOnData() {
         Log.d(LOG_TAG, "determineBrightnessLevelBasedOnData()");
+
+        //No point in setting brightness values if the activity has not changed unless timeout has passed
+        //Also has the bonus effect of not wiping out linked brightness settings
+        if (((System.currentTimeMillis() - mLastSetTime) < VALUE_TIMEOUT) && (mLastActivity != null && mDetectedActivity.getType() == mLastActivity.getType())){
+            return;
+        }
 
         if (!isDaytime()) {
             Log.d(LOG_TAG, "It's night time, set to lowest level");
@@ -272,6 +314,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
      *         {@link BrightnessLevel} to be sent to the watch
      */
     private void setBrightnessLevel(int brightnessLevel) {
+        mLastSetTime = System.currentTimeMillis();
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             sendBrightnessLevelToWatch(brightnessLevel);
         } else {

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.danvelazco.wear.displaybrightness" >
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
@@ -14,13 +14,12 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".BrightnessLevelsPreferenceActivity"
+            android:name="com.danvelazco.wear.displaybrightness.BrightnessLevelsPreferenceActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,22 +27,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".DebugActivity"
-            android:label="@string/lbl_debug"/>
+            android:name="com.danvelazco.wear.displaybrightness.DebugActivity"
+            android:label="@string/lbl_debug" />
 
-        <receiver android:name=".receiver.BootReceiver">
+        <receiver android:name="com.danvelazco.wear.displaybrightness.receiver.BootReceiver" >
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name=".service.ActivityRecognitionIntentService"
+            android:name="com.danvelazco.wear.displaybrightness.service.ActivityRecognitionIntentService"
             android:exported="false" >
         </service>
 
+        <service
+            android:name="com.danvelazco.wear.displaybrightness.service.ScreenMonitorService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
