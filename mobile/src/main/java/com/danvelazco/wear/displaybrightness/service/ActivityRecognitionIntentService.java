@@ -9,12 +9,11 @@ import android.util.Log;
 import com.danvelazco.wear.displaybrightness.BrightnessLevelsPreferenceActivity;
 import com.danvelazco.wear.displaybrightness.shared.BrightnessLevel;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.ActivityRecognitionClient;
+import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -24,24 +23,23 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 /**
- * Intent service used by the {@link ActivityRecognitionClient} to receive the current {@link DetectedActivity} the user
+ * Intent service used by the {@link ActivityRecognition#API} to receive the current {@link DetectedActivity} the user
  * is doing at the moment.
  * <p/>
  * When this {@link IntentService} starts, we fetch the {@link DetectedActivity} via {@link #onHandleIntent(Intent)},
- * determine the user's last known location using the {@link LocationClient#getLastLocation()}, calculate the user's
- * sunrise/sunset times, and determine the proper {@link BrightnessLevel} and send it to the wearable using the Data
- * API.
+ * determine the user's last known location using the {@link com.google.android.gms.location.FusedLocationProviderApi#getLastLocation(GoogleApiClient)},
+ * calculate the user's sunrise/sunset times, and determine the proper {@link BrightnessLevel} and send it to the
+ * wearable using the Data API.
  */
 public class ActivityRecognitionIntentService extends IntentService implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, GooglePlayServicesClient.ConnectionCallbacks {
+        GoogleApiClient.OnConnectionFailedListener {
 
     // Constants
-    private static final String LOG_TAG = "ActivityRecognitionIntentService";
+    private static final String LOG_TAG = "ActivityRecognitionIS";
 
     // Members
     private GoogleApiClient mGoogleApiClient;
     private SharedPreferences mSharedPreferencesBrightnessLevels;
-    private LocationClient mLocationClient;
 
     // Pending data
     private DetectedActivity mDetectedActivity = null;
@@ -58,20 +56,18 @@ public class ActivityRecognitionIntentService extends IntentService implements G
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("ActivityRecognitionIntentService", "onCreate()");
+        Log.d(LOG_TAG, "onCreate()");
 
         mSharedPreferencesBrightnessLevels = getSharedPreferences(BrightnessLevelsPreferenceActivity.KEY_PREF_FILENAME,
                 MODE_MULTI_PROCESS);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
+                .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
         mGoogleApiClient.connect();
-
-        mLocationClient = new LocationClient(this, this, this);
-        mLocationClient.connect();
     }
 
     /**
@@ -79,29 +75,22 @@ public class ActivityRecognitionIntentService extends IntentService implements G
      */
     @Override
     public void onConnected(Bundle bundle) {
-        if (mLocationClient != null && mLocationClient.isConnected() && (mPendingLevelToSend == -1)) {
-            if (mLocationClient.getLastLocation() != null) {
-                mCurrentLocation = mLocationClient.getLastLocation();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            if ((LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) != null)
+                    && (mPendingLevelToSend == -1)) {
+                mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
                 // Synchronize the activity detection and the user's location before sending data to wearable
                 if (mDetectedActivity != null) {
                     determineBrightnessLevelBasedOnData();
                 }
             }
-        }
 
-        // If the client is connected and we have pending data to be sent, simply send it
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected() && (mPendingLevelToSend != -1)) {
-            sendBrightnessLevelToWatch(mPendingLevelToSend);
+            // If the client is connected and we have pending data to be sent, simply send it
+            if (mPendingLevelToSend != -1) {
+                sendBrightnessLevelToWatch(mPendingLevelToSend);
+            }
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onDisconnected() {
-        // Not implemented
     }
 
     /**
@@ -125,7 +114,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("ActivityRecognitionIntentService", "onHandleIntent()");
+        Log.d(LOG_TAG, "onHandleIntent()");
         ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
         if (result != null) {
             DetectedActivity detectedActivity = result.getMostProbableActivity();
@@ -148,10 +137,6 @@ public class ActivityRecognitionIntentService extends IntentService implements G
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
             mGoogleApiClient = null;
-        }
-        if (mLocationClient != null && mLocationClient.isConnected()) {
-            mLocationClient.disconnect();
-            mLocationClient = null;
         }
     }
 
@@ -221,7 +206,7 @@ public class ActivityRecognitionIntentService extends IntentService implements G
                 break;
         }
 
-        String brightnessLevelValueString = mSharedPreferencesBrightnessLevels. getString(brightnessLevelPrefKey,
+        String brightnessLevelValueString = mSharedPreferencesBrightnessLevels.getString(brightnessLevelPrefKey,
                 defaultValue);
         setBrightnessLevel(Integer.parseInt(brightnessLevelValueString));
     }

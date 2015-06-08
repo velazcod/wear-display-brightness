@@ -6,15 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.danvelazco.wear.displaybrightness.service.ActivityRecognitionIntentService;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.ActivityRecognitionClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.ActivityRecognition;
 
 /**
- * Helper class that simply schedules activity detection with the {@link ActivityRecognitionClient} and then
- * disconnects. Call {@link #scheduleActivityUpdates()}
+ * Helper class that simply schedules activity detection with the {@link ActivityRecognition#API} and then disconnects.
+ * Call {@link #scheduleActivityUpdates()}
  */
-public class ActivityRecognitionHelper implements GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+public class ActivityRecognitionHelper implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     // Constants that define the activity detection interval
     public static final int MILLISECONDS_PER_SECOND = 1000;
@@ -25,12 +25,12 @@ public class ActivityRecognitionHelper implements GooglePlayServicesClient.Conne
 //    public static final int DETECTION_INTERVAL_MILLISECONDS = 10 * MILLISECONDS_PER_SECOND; // Debug
 
     // Members
-    private ActivityRecognitionClient mActivityRecognitionClient;
+    private GoogleApiClient mGoogleApiClient = null;
     private PendingIntent mActivityRecognitionPendingIntent;
 
     /**
-     * Constructor, requires a context that will be used for the {@link PendingIntent} that will be used by the {@link
-     * ActivityRecognitionClient}
+     * Constructor, requires a context that will be used for the {@link PendingIntent} used by the {@link
+     * ActivityRecognition#API}
      *
      * @param context
      *         {@link Context}
@@ -39,7 +39,12 @@ public class ActivityRecognitionHelper implements GooglePlayServicesClient.Conne
         Intent intentService = new Intent(context, ActivityRecognitionIntentService.class);
         mActivityRecognitionPendingIntent = PendingIntent.getService(context, 0, intentService,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        mActivityRecognitionClient = new ActivityRecognitionClient(context, this, this);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(ActivityRecognition.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
 
     /**
@@ -47,13 +52,13 @@ public class ActivityRecognitionHelper implements GooglePlayServicesClient.Conne
      */
     @Override
     public void onConnected(Bundle bundle) {
-        if ((mActivityRecognitionClient != null) && mActivityRecognitionClient.isConnected()
+        if ((mGoogleApiClient != null) && mGoogleApiClient.isConnected()
                 && (mActivityRecognitionPendingIntent != null)) {
-            mActivityRecognitionClient.requestActivityUpdates(DETECTION_INTERVAL_MILLISECONDS,
-                    mActivityRecognitionPendingIntent);
+            ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(mGoogleApiClient,
+                    DETECTION_INTERVAL_MILLISECONDS, mActivityRecognitionPendingIntent);
 
             // After scheduling the updates, simply disconnect
-            mActivityRecognitionClient.disconnect();
+            mGoogleApiClient.disconnect();
         }
     }
 
@@ -61,7 +66,7 @@ public class ActivityRecognitionHelper implements GooglePlayServicesClient.Conne
      * {@inheritDoc}
      */
     @Override
-    public void onDisconnected() {
+    public void onConnectionSuspended(int i) {
         // No implementation
     }
 
@@ -74,12 +79,12 @@ public class ActivityRecognitionHelper implements GooglePlayServicesClient.Conne
     }
 
     /**
-     * Start a connection with the {@link ActivityRecognitionClient}, when it's connected, {@link #onConnected(Bundle)}
+     * Start a connection with the {@link ActivityRecognition#API}, when it's connected, {@link #onConnected(Bundle)}
      * will be called and then the updates will be scheduled.
      */
     public void scheduleActivityUpdates() {
-        if (mActivityRecognitionClient != null) {
-            mActivityRecognitionClient.connect();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
         }
     }
 

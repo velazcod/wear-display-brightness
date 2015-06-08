@@ -10,7 +10,6 @@ import android.view.Window;
 import android.widget.Button;
 import com.danvelazco.wear.displaybrightness.shared.BrightnessLevel;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
@@ -21,7 +20,7 @@ import com.google.android.gms.wearable.Wearable;
  * @since 9/15/14
  */
 public class DebugActivity extends Activity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, GooglePlayServicesClient.ConnectionCallbacks {
+        GoogleApiClient.OnConnectionFailedListener {
 
     // Constants
     private static final String LOG_TAG = "DebugActivity";
@@ -153,7 +152,7 @@ public class DebugActivity extends Activity implements View.OnClickListener, Goo
      * {@inheritDoc}
      */
     @Override
-    public void onDisconnected() {
+    public void onConnectionSuspended(int i) {
         if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
             mBtnLowest.setEnabled(false);
             mBtnMediumLow.setEnabled(false);
@@ -161,14 +160,6 @@ public class DebugActivity extends Activity implements View.OnClickListener, Goo
             mBtnMediumHigh.setEnabled(false);
             mBtnHighest.setEnabled(false);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onConnectionSuspended(int i) {
-        // Not implemented
     }
 
     /**

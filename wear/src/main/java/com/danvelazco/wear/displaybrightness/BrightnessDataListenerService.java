@@ -20,7 +20,7 @@ import java.util.List;
 public class BrightnessDataListenerService extends WearableListenerService {
 
     // Constants
-    private static final String LOG_TAG = "BrightnessDataListenerService";
+    private static final String LOG_TAG = "BrightnessDataListener";
 
     /**
      * Listen for data changes on the {@link BrightnessLevel#PATH_BRIGHTNESS}
