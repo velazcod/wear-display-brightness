@@ -7,8 +7,8 @@ android {
     defaultConfig {
         applicationId "com.danvelazco.wear.displaybrightness"
 
-        minSdkVersion 20
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion rootProject.ext.wearMinSdkVersion
+        targetSdkVersion rootProject.ext.wearTargetSdkVersion
 
         versionCode 3
         versionName "1.2"
@@ -21,19 +21,22 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
+
+final GPS_VERSION = rootProject.ext.GOOGLE_PLAY_SERVICES_VERSION
+final WEARABLE_SUPPORT_LIBRARY_VERSION = rootProject.ext.WEARABLE_SUPPORT_LIBRARY_VERSION
 
 dependencies {
     // Compile the shared module
     compile project(':shared')
 
     // Google utility libraries
-    compile 'com.google.android.support:wearable:1.+'
-    compile 'com.google.android.gms:play-services-wearable:5.+'
+    compile "com.google.android.support:wearable:${WEARABLE_SUPPORT_LIBRARY_VERSION}"
+    compile "com.google.android.gms:play-services-wearable:${GPS_VERSION}"
 
     // Compile all jars under the lib folder
     compile fileTree(dir: 'libs', include: ['*.jar'])

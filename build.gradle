@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.13.+'
+        classpath 'com.android.tools.build:gradle:1.2.3'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -19,10 +19,18 @@ allprojects {
 }
 
 ext {
-    compileSdkVersion = 21
-    buildToolsVersion = "21.1.1"
+    compileSdkVersion = 22
+    buildToolsVersion = "22.0.1"
 
-    targetSdkVersion = 21
+    minSdkVersion = 18
+    targetSdkVersion = 22
+
+    wearMinSdkVersion = 20
+    wearTargetSdkVersion = 22
+
+    SUPPORT_LIBRARY_VERSION = "22.2.+"
+    WEARABLE_SUPPORT_LIBRARY_VERSION = "1.2.+"
+    GOOGLE_PLAY_SERVICES_VERSION = "7.3.+"
 
     preDexLibs = !project.hasProperty('disablePreDex')
 }

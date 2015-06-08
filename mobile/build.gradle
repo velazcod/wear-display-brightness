@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.danvelazco.wear.displaybrightness"
 
-        minSdkVersion 18
+        minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
 
         versionCode 3
@@ -21,11 +21,14 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
+
+final GPS_VERSION = rootProject.ext.GOOGLE_PLAY_SERVICES_VERSION
+final SUPPORT_LIBRARY_VERSION = rootProject.ext.SUPPORT_LIBRARY_VERSION
 
 dependencies {
     // Include the watch app
@@ -35,7 +38,11 @@ dependencies {
     compile project(':shared')
 
     // Google utility libraries
-    compile 'com.google.android.gms:play-services-wearable:5.+'
+    compile "com.google.android.gms:play-services-wearable:${GPS_VERSION}"
+
+    // Support libraries
+    compile "com.android.support:support-v13:${SUPPORT_LIBRARY_VERSION}"
+    compile "com.android.support:appcompat-v7:${SUPPORT_LIBRARY_VERSION}"
 
     //Sunrise/Sunset calculator library
     compile 'com.luckycatlabs:SunriseSunsetCalculator:1.1'
