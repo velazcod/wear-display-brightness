@@ -25,21 +25,35 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
     // Preference keys
     public final static String KEY_PREF_FILENAME = "pref_brightness_levels";
     public final static String KEY_LEVEL_DRIVING = "level_driving";
+    public final static String KEY_LEVEL_NIGHT_DRIVING = "level_night_driving";
     public final static String KEY_LEVEL_ON_BICYCLE = "level_on_bicycle";
+    public final static String KEY_LEVEL_NIGHT_ON_BICYCLE = "level_night_on_bicycle";
     public final static String KEY_LEVEL_WALKING = "level_walking";
+    public final static String KEY_LEVEL_NIGHT_WALKING = "level_night_walking";
     public final static String KEY_LEVEL_RUNNING = "level_running";
+    public final static String KEY_LEVEL_NIGHT_RUNNING = "level_night_running";
     public final static String KEY_LEVEL_STILL = "level_still";
+    public final static String KEY_LEVEL_NIGHT_STILL = "level_night_still";
     public final static String KEY_LEVEL_ON_FOOT = "level_on_foot";
+    public final static String KEY_LEVEL_NIGHT_ON_FOOT = "level_night_on_foot";
     public final static String KEY_LEVEL_UNKNOWN = "level_unknown";
+    public final static String KEY_LEVEL_NIGHT_UNKNOWN = "level_night_unknown";
 
     // Default values
     public final static int DEFAULT_LEVEL_DRIVING = BrightnessLevel.HIGHEST;
+    public final static int DEFAULT_LEVEL_NIGHT_DRIVING = BrightnessLevel.LOWEST;
     public final static int DEFAULT_LEVEL_BICYCLE = BrightnessLevel.HIGHEST;
+    public final static int DEFAULT_LEVEL_NIGHT_BICYCLE = BrightnessLevel.MEDIUM_LOW;
     public final static int DEFAULT_LEVEL_WALKING = BrightnessLevel.HIGHEST;
+    public final static int DEFAULT_LEVEL_NIGHT_WALKING = BrightnessLevel.MEDIUM;
     public final static int DEFAULT_LEVEL_RUNNING = BrightnessLevel.HIGHEST;
+    public final static int DEFAULT_LEVEL_NIGHT_RUNNING = BrightnessLevel.MEDIUM;
     public final static int DEFAULT_LEVEL_STILL = BrightnessLevel.MEDIUM;
+    public final static int DEFAULT_LEVEL_NIGHT_STILL = BrightnessLevel.LOWEST;
     public final static int DEFAULT_LEVEL_ON_FOOT = BrightnessLevel.HIGHEST;
+    public final static int DEFAULT_LEVEL_NIGHT_ON_FOOT = BrightnessLevel.MEDIUM;
     public final static int DEFAULT_LEVEL_UNKNOWN = BrightnessLevel.MEDIUM;
+    public final static int DEFAULT_LEVEL_NIGHT_UNKNOWN = BrightnessLevel.MEDIUM_LOW;
 
     /**
      * {@inheritDoc}
@@ -113,12 +127,19 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
 
         // Preference items
         private ListPreference mPreferenceDriving;
+        private ListPreference mPreferenceNightDriving;
         private ListPreference mPreferenceBicycle;
+        private ListPreference mPreferenceNightBicycle;
         private ListPreference mPreferenceWalking;
+        private ListPreference mPreferenceNightWalking;
         private ListPreference mPreferenceRunning;
+        private ListPreference mPreferenceNightRunning;
         private ListPreference mPreferenceStill;
+        private ListPreference mPreferenceNightStill;
         private ListPreference mPreferenceOnFoot;
+        private ListPreference mPreferenceNightOnFoot;
         private ListPreference mPreferenceUnknown;
+        private ListPreference mPreferenceNightUnknown;
 
         /**
          * Fragments constructors should be empty, use newInstance to pass arguments and then set these arguments as a
@@ -143,23 +164,44 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
             mPreferenceDriving = (ListPreference) findPreference(KEY_LEVEL_DRIVING);
             mPreferenceDriving.setOnPreferenceChangeListener(this);
 
+            mPreferenceNightDriving = (ListPreference) findPreference(KEY_LEVEL_NIGHT_DRIVING);
+            mPreferenceNightDriving.setOnPreferenceChangeListener(this);
+
             mPreferenceBicycle = (ListPreference) findPreference(KEY_LEVEL_ON_BICYCLE);
             mPreferenceBicycle.setOnPreferenceChangeListener(this);
+
+            mPreferenceNightBicycle = (ListPreference) findPreference(KEY_LEVEL_NIGHT_ON_BICYCLE);
+            mPreferenceNightBicycle.setOnPreferenceChangeListener(this);
 
             mPreferenceWalking = (ListPreference) findPreference(KEY_LEVEL_WALKING);
             mPreferenceWalking.setOnPreferenceChangeListener(this);
 
+            mPreferenceNightWalking = (ListPreference) findPreference(KEY_LEVEL_NIGHT_WALKING);
+            mPreferenceNightWalking.setOnPreferenceChangeListener(this);
+
             mPreferenceRunning = (ListPreference) findPreference(KEY_LEVEL_RUNNING);
             mPreferenceRunning.setOnPreferenceChangeListener(this);
+
+            mPreferenceNightRunning = (ListPreference) findPreference(KEY_LEVEL_NIGHT_RUNNING);
+            mPreferenceNightRunning.setOnPreferenceChangeListener(this);
 
             mPreferenceStill = (ListPreference) findPreference(KEY_LEVEL_STILL);
             mPreferenceStill.setOnPreferenceChangeListener(this);
 
+            mPreferenceNightStill = (ListPreference) findPreference(KEY_LEVEL_NIGHT_STILL);
+            mPreferenceNightStill.setOnPreferenceChangeListener(this);
+
             mPreferenceOnFoot = (ListPreference) findPreference(KEY_LEVEL_ON_FOOT);
             mPreferenceOnFoot.setOnPreferenceChangeListener(this);
 
+            mPreferenceNightOnFoot = (ListPreference) findPreference(KEY_LEVEL_NIGHT_ON_FOOT);
+            mPreferenceNightOnFoot.setOnPreferenceChangeListener(this);
+
             mPreferenceUnknown = (ListPreference) findPreference(KEY_LEVEL_UNKNOWN);
             mPreferenceUnknown.setOnPreferenceChangeListener(this);
+
+            mPreferenceNightUnknown = (ListPreference) findPreference(KEY_LEVEL_NIGHT_UNKNOWN);
+            mPreferenceNightUnknown.setOnPreferenceChangeListener(this);
         }
 
         /**
@@ -181,28 +223,56 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
                     setBrightnessLevelPreferenceSummary(mPreferenceDriving, getPreferenceEntryLabel(mPreferenceDriving,
                             (CharSequence) newValue));
                     return true;
+                case KEY_LEVEL_NIGHT_DRIVING:
+                    setBrightnessLevelPreferenceSummary(mPreferenceNightDriving, getPreferenceEntryLabel(mPreferenceDriving,
+                            (CharSequence) newValue));
+                    return true;
                 case KEY_LEVEL_ON_BICYCLE:
                     setBrightnessLevelPreferenceSummary(mPreferenceBicycle, getPreferenceEntryLabel(mPreferenceBicycle,
+                            (CharSequence) newValue));
+                    return true;
+                case KEY_LEVEL_NIGHT_ON_BICYCLE:
+                    setBrightnessLevelPreferenceSummary(mPreferenceNightBicycle, getPreferenceEntryLabel(mPreferenceBicycle,
                             (CharSequence) newValue));
                     return true;
                 case KEY_LEVEL_WALKING:
                     setBrightnessLevelPreferenceSummary(mPreferenceWalking, getPreferenceEntryLabel(mPreferenceWalking,
                             (CharSequence) newValue));
                     return true;
+                case KEY_LEVEL_NIGHT_WALKING:
+                    setBrightnessLevelPreferenceSummary(mPreferenceNightWalking, getPreferenceEntryLabel(mPreferenceWalking,
+                            (CharSequence) newValue));
+                    return true;
                 case KEY_LEVEL_RUNNING:
                     setBrightnessLevelPreferenceSummary(mPreferenceRunning, getPreferenceEntryLabel(mPreferenceRunning,
+                            (CharSequence) newValue));
+                    return true;
+                case KEY_LEVEL_NIGHT_RUNNING:
+                    setBrightnessLevelPreferenceSummary(mPreferenceNightRunning, getPreferenceEntryLabel(mPreferenceRunning,
                             (CharSequence) newValue));
                     return true;
                 case KEY_LEVEL_STILL:
                     setBrightnessLevelPreferenceSummary(mPreferenceStill, getPreferenceEntryLabel(mPreferenceStill,
                             (CharSequence) newValue));
                     return true;
+                case KEY_LEVEL_NIGHT_STILL:
+                    setBrightnessLevelPreferenceSummary(mPreferenceNightStill, getPreferenceEntryLabel(mPreferenceStill,
+                            (CharSequence) newValue));
+                    return true;
                 case KEY_LEVEL_ON_FOOT:
                     setBrightnessLevelPreferenceSummary(mPreferenceOnFoot, getPreferenceEntryLabel(mPreferenceOnFoot,
                             (CharSequence) newValue));
                     return true;
+                case KEY_LEVEL_NIGHT_ON_FOOT:
+                    setBrightnessLevelPreferenceSummary(mPreferenceNightOnFoot, getPreferenceEntryLabel(mPreferenceOnFoot,
+                            (CharSequence) newValue));
+                    return true;
                 case KEY_LEVEL_UNKNOWN:
                     setBrightnessLevelPreferenceSummary(mPreferenceUnknown, getPreferenceEntryLabel(mPreferenceUnknown,
+                            (CharSequence) newValue));
+                    return true;
+                case KEY_LEVEL_NIGHT_UNKNOWN:
+                    setBrightnessLevelPreferenceSummary(mPreferenceNightUnknown, getPreferenceEntryLabel(mPreferenceUnknown,
                             (CharSequence) newValue));
                     return true;
             }
@@ -214,12 +284,19 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
          */
         private void resetSummaries() {
             setBrightnessLevelPreferenceSummary(mPreferenceDriving, mPreferenceDriving.getEntry());
+            setBrightnessLevelPreferenceSummary(mPreferenceNightDriving, mPreferenceNightDriving.getEntry());
             setBrightnessLevelPreferenceSummary(mPreferenceBicycle, mPreferenceBicycle.getEntry());
+            setBrightnessLevelPreferenceSummary(mPreferenceNightBicycle, mPreferenceNightBicycle.getEntry());
             setBrightnessLevelPreferenceSummary(mPreferenceWalking, mPreferenceWalking.getEntry());
+            setBrightnessLevelPreferenceSummary(mPreferenceNightWalking, mPreferenceNightWalking.getEntry());
             setBrightnessLevelPreferenceSummary(mPreferenceRunning, mPreferenceRunning.getEntry());
+            setBrightnessLevelPreferenceSummary(mPreferenceNightRunning, mPreferenceNightRunning.getEntry());
             setBrightnessLevelPreferenceSummary(mPreferenceStill, mPreferenceStill.getEntry());
+            setBrightnessLevelPreferenceSummary(mPreferenceNightStill, mPreferenceNightStill.getEntry());
             setBrightnessLevelPreferenceSummary(mPreferenceOnFoot, mPreferenceOnFoot.getEntry());
+            setBrightnessLevelPreferenceSummary(mPreferenceNightOnFoot, mPreferenceNightOnFoot.getEntry());
             setBrightnessLevelPreferenceSummary(mPreferenceUnknown, mPreferenceUnknown.getEntry());
+            setBrightnessLevelPreferenceSummary(mPreferenceNightUnknown, mPreferenceNightUnknown.getEntry());
         }
 
         /**

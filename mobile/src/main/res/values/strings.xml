@@ -8,6 +8,8 @@
     <string name="lbl_activity_preference_summary">Brightness level: %s</string>
 
     <!-- Activities -->
+    <string name="lbl_day">Day</string>
+    <string name="lbl_night">Night</string>
     <string name="lbl_activity_driving">Driving</string>
     <string name="lbl_activity_on_bicycle">On bicycle</string>
     <string name="lbl_activity_walking">Walking</string>

@@ -1,56 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Brightness levels">
+    <PreferenceCategory android:title="@string/lbl_activity_driving">
 
         <ListPreference
             android:key="level_driving"
-            android:title="@string/lbl_activity_driving"
+            android:title="@string/lbl_day"
             android:entries="@array/brightness_levels_array"
             android:entryValues="@array/brightness_levels_values"
             android:defaultValue="@string/brightness_level_highest_value" />
+
+        <ListPreference
+            android:key="level_night_driving"
+            android:title="@string/lbl_night"
+            android:entries="@array/brightness_levels_array"
+            android:entryValues="@array/brightness_levels_values"
+            android:defaultValue="@string/brightness_level_lowest_value" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/lbl_activity_on_bicycle">
 
         <ListPreference
             android:key="level_on_bicycle"
-            android:title="@string/lbl_activity_on_bicycle"
+            android:title="@string/lbl_day"
             android:entries="@array/brightness_levels_array"
             android:entryValues="@array/brightness_levels_values"
             android:defaultValue="@string/brightness_level_highest_value" />
+
+        <ListPreference
+            android:key="level_night_on_bicycle"
+            android:title="@string/lbl_night"
+            android:entries="@array/brightness_levels_array"
+            android:entryValues="@array/brightness_levels_values"
+            android:defaultValue="@string/brightness_level_medium_low_value" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/lbl_activity_walking">
 
         <ListPreference
             android:key="level_walking"
-            android:title="@string/lbl_activity_walking"
+            android:title="@string/lbl_day"
             android:entries="@array/brightness_levels_array"
             android:entryValues="@array/brightness_levels_values"
             android:defaultValue="@string/brightness_level_highest_value" />
+
+        <ListPreference
+            android:key="level_night_walking"
+            android:title="@string/lbl_night"
+            android:entries="@array/brightness_levels_array"
+            android:entryValues="@array/brightness_levels_values"
+            android:defaultValue="@string/brightness_level_medium_value" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/lbl_activity_running">
 
         <ListPreference
             android:key="level_running"
-            android:title="@string/lbl_activity_running"
+            android:title="@string/lbl_day"
             android:entries="@array/brightness_levels_array"
             android:entryValues="@array/brightness_levels_values"
             android:defaultValue="@string/brightness_level_highest_value" />
 
         <ListPreference
+            android:key="level_night_running"
+            android:title="@string/lbl_night"
+            android:entries="@array/brightness_levels_array"
+            android:entryValues="@array/brightness_levels_values"
+            android:defaultValue="@string/brightness_level_medium_value" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/lbl_activity_still">
+
+        <ListPreference
             android:key="level_still"
-            android:title="@string/lbl_activity_still"
+            android:title="@string/lbl_day"
             android:entries="@array/brightness_levels_array"
             android:entryValues="@array/brightness_levels_values"
             android:defaultValue="@string/brightness_level_medium_value" />
 
         <ListPreference
+            android:key="level_night_still"
+            android:title="@string/lbl_night"
+            android:entries="@array/brightness_levels_array"
+            android:entryValues="@array/brightness_levels_values"
+            android:defaultValue="@string/brightness_level_lowest_value" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/lbl_activity_on_foot">
+
+        <ListPreference
             android:key="level_on_foot"
-            android:title="@string/lbl_activity_on_foot"
+            android:title="@string/lbl_day"
             android:entries="@array/brightness_levels_array"
             android:entryValues="@array/brightness_levels_values"
             android:defaultValue="@string/brightness_level_medium_high_value" />
 
         <ListPreference
-            android:key="level_unknown"
-            android:title="@string/lbl_activity_unknown"
+            android:key="level_night_on_foot"
+            android:title="@string/lbl_night"
             android:entries="@array/brightness_levels_array"
             android:entryValues="@array/brightness_levels_values"
             android:defaultValue="@string/brightness_level_medium_value" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/lbl_activity_unknown">
+
+        <ListPreference
+            android:key="level_unknown"
+            android:title="@string/lbl_day"
+            android:entries="@array/brightness_levels_array"
+            android:entryValues="@array/brightness_levels_values"
+            android:defaultValue="@string/brightness_level_medium_value" />
+
+        <ListPreference
+            android:key="level_night_unknown"
+            android:title="@string/lbl_night"
+            android:entries="@array/brightness_levels_array"
+            android:entryValues="@array/brightness_levels_values"
+            android:defaultValue="@string/brightness_level_medium_low_value" />
 
     </PreferenceCategory>
 

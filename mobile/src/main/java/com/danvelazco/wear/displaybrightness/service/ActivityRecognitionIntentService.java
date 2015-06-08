@@ -147,62 +147,68 @@ public class ActivityRecognitionIntentService extends IntentService implements G
     private void determineBrightnessLevelBasedOnData() {
         Log.d(LOG_TAG, "determineBrightnessLevelBasedOnData()");
 
-        if (!isDaytime()) {
-            Log.d(LOG_TAG, "It's night time, set to lowest level");
-
-            // It's nighttime, nothing to see here, set it to lowest and forget it!
-            setBrightnessLevel(BrightnessLevel.LOWEST);
-            return;
-        } else {
-            Log.d(LOG_TAG, "It's day time, get current activity");
-        }
+        boolean isDaytime = isDaytime();
+        Log.d(LOG_TAG, "It's " + (isDaytime ? "day time" : "night time") + " time");
 
         String brightnessLevelPrefKey;
         String defaultValue;
         switch (mDetectedActivity.getType()) {
             case DetectedActivity.IN_VEHICLE:
                 Log.d(LOG_TAG, "Vehicle");
-                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_DRIVING;
-                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_DRIVING);
+                brightnessLevelPrefKey = isDaytime ? BrightnessLevelsPreferenceActivity.KEY_LEVEL_DRIVING :
+                        BrightnessLevelsPreferenceActivity.KEY_LEVEL_NIGHT_DRIVING;
+                defaultValue = isDaytime ? Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_DRIVING) :
+                        Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_NIGHT_DRIVING);
                 break;
             case DetectedActivity.ON_BICYCLE:
                 Log.d(LOG_TAG, "On bicycle");
-                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_ON_BICYCLE;
-                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_BICYCLE);
+                brightnessLevelPrefKey = isDaytime ? BrightnessLevelsPreferenceActivity.KEY_LEVEL_ON_BICYCLE :
+                        BrightnessLevelsPreferenceActivity.KEY_LEVEL_NIGHT_ON_BICYCLE;
+                defaultValue = isDaytime ? Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_BICYCLE) :
+                        Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_NIGHT_BICYCLE);
                 break;
             case DetectedActivity.WALKING:
                 Log.d(LOG_TAG, "Walking");
-                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_WALKING;
-                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_WALKING);
+                brightnessLevelPrefKey = isDaytime ? BrightnessLevelsPreferenceActivity.KEY_LEVEL_WALKING :
+                        BrightnessLevelsPreferenceActivity.KEY_LEVEL_NIGHT_WALKING;
+                defaultValue = isDaytime ? Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_WALKING) :
+                        Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_NIGHT_WALKING);
                 break;
             case DetectedActivity.RUNNING:
                 Log.d(LOG_TAG, "Running");
-                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_RUNNING;
-                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_RUNNING);
+                brightnessLevelPrefKey = isDaytime ? BrightnessLevelsPreferenceActivity.KEY_LEVEL_RUNNING :
+                        BrightnessLevelsPreferenceActivity.KEY_LEVEL_NIGHT_RUNNING;
+                defaultValue = isDaytime ? Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_RUNNING) :
+                        Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_NIGHT_RUNNING);
                 break;
             case DetectedActivity.STILL:
                 Log.d(LOG_TAG, "Still");
-                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_STILL;
-                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_STILL);
-                break;
-            case DetectedActivity.ON_FOOT:
-                Log.d(LOG_TAG, "On foot");
-                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_ON_FOOT;
-                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_ON_FOOT);
+                brightnessLevelPrefKey = isDaytime ? BrightnessLevelsPreferenceActivity.KEY_LEVEL_STILL :
+                        BrightnessLevelsPreferenceActivity.KEY_LEVEL_NIGHT_STILL;
+                defaultValue = isDaytime ? Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_STILL) :
+                        Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_NIGHT_STILL);
                 break;
             case DetectedActivity.TILTING:
-                Log.d(LOG_TAG, "Tilting");
-                // Nope... Ignored tilting!
-                return;
+            case DetectedActivity.ON_FOOT:
+                Log.d(LOG_TAG, "On foot");
+                brightnessLevelPrefKey = isDaytime ? BrightnessLevelsPreferenceActivity.KEY_LEVEL_ON_FOOT :
+                        BrightnessLevelsPreferenceActivity.KEY_LEVEL_NIGHT_ON_FOOT;
+                defaultValue = isDaytime ? Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_ON_FOOT) :
+                        Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_NIGHT_ON_FOOT);
+                break;
             case DetectedActivity.UNKNOWN:
                 Log.d(LOG_TAG, "Unknown");
-                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_UNKNOWN;
-                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_UNKNOWN);
+                brightnessLevelPrefKey = isDaytime ? BrightnessLevelsPreferenceActivity.KEY_LEVEL_UNKNOWN :
+                        BrightnessLevelsPreferenceActivity.KEY_LEVEL_NIGHT_UNKNOWN;
+                defaultValue = isDaytime ? Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_UNKNOWN) :
+                        Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_NIGHT_UNKNOWN);
                 break;
             default:
                 Log.d(LOG_TAG, "I have no idea what I'm doing");
-                brightnessLevelPrefKey = BrightnessLevelsPreferenceActivity.KEY_LEVEL_UNKNOWN;
-                defaultValue = Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_UNKNOWN);
+                brightnessLevelPrefKey = isDaytime ? BrightnessLevelsPreferenceActivity.KEY_LEVEL_UNKNOWN :
+                        BrightnessLevelsPreferenceActivity.KEY_LEVEL_NIGHT_UNKNOWN;
+                defaultValue = isDaytime ? Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_UNKNOWN) :
+                        Integer.toString(BrightnessLevelsPreferenceActivity.DEFAULT_LEVEL_NIGHT_UNKNOWN);
                 break;
         }
 
