@@ -113,7 +113,7 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
 
         // Preference items
         private ListPreference mPreferenceDriving;
-        private ListPreference mPreferenceBicyle;
+        private ListPreference mPreferenceBicycle;
         private ListPreference mPreferenceWalking;
         private ListPreference mPreferenceRunning;
         private ListPreference mPreferenceStill;
@@ -143,8 +143,8 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
             mPreferenceDriving = (ListPreference) findPreference(KEY_LEVEL_DRIVING);
             mPreferenceDriving.setOnPreferenceChangeListener(this);
 
-            mPreferenceBicyle = (ListPreference) findPreference(KEY_LEVEL_ON_BICYCLE);
-            mPreferenceBicyle.setOnPreferenceChangeListener(this);
+            mPreferenceBicycle = (ListPreference) findPreference(KEY_LEVEL_ON_BICYCLE);
+            mPreferenceBicycle.setOnPreferenceChangeListener(this);
 
             mPreferenceWalking = (ListPreference) findPreference(KEY_LEVEL_WALKING);
             mPreferenceWalking.setOnPreferenceChangeListener(this);
@@ -182,7 +182,7 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
                             (CharSequence) newValue));
                     return true;
                 case KEY_LEVEL_ON_BICYCLE:
-                    setBrightnessLevelPreferenceSummary(mPreferenceBicyle, getPreferenceEntryLabel(mPreferenceBicyle,
+                    setBrightnessLevelPreferenceSummary(mPreferenceBicycle, getPreferenceEntryLabel(mPreferenceBicycle,
                             (CharSequence) newValue));
                     return true;
                 case KEY_LEVEL_WALKING:
@@ -214,7 +214,7 @@ public class BrightnessLevelsPreferenceActivity extends Activity {
          */
         private void resetSummaries() {
             setBrightnessLevelPreferenceSummary(mPreferenceDriving, mPreferenceDriving.getEntry());
-            setBrightnessLevelPreferenceSummary(mPreferenceBicyle, mPreferenceBicyle.getEntry());
+            setBrightnessLevelPreferenceSummary(mPreferenceBicycle, mPreferenceBicycle.getEntry());
             setBrightnessLevelPreferenceSummary(mPreferenceWalking, mPreferenceWalking.getEntry());
             setBrightnessLevelPreferenceSummary(mPreferenceRunning, mPreferenceRunning.getEntry());
             setBrightnessLevelPreferenceSummary(mPreferenceStill, mPreferenceStill.getEntry());
